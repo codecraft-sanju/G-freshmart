@@ -52,6 +52,28 @@ const MinusIcon = () => (
   </svg>
 );
 
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
+const StoreIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+    <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+    <path d="M2 7h20" />
+    <path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7" />
+  </svg>
+);
+
+const StarIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
 
 // --- Components ---
 function Preloader({ onComplete }) {
@@ -148,7 +170,7 @@ function DigitBox({ value, label }) {
 function FeatureCard({ icon, title, desc, delay }) {
   return (
     <Reveal delay={delay}>
-      <div className="bg-white border border-slate-200 rounded-[2rem] p-8 flex flex-col items-start transition-all duration-500 hover:border-[#22c55e] hover:shadow-2xl hover:shadow-[#155e2d]/10 hover:-translate-y-2 group cursor-default">
+      <div className="bg-white border border-slate-200 rounded-[2rem] p-8 flex flex-col items-start transition-all duration-500 hover:border-[#22c55e] hover:shadow-2xl hover:shadow-[#155e2d]/10 hover:-translate-y-2 group cursor-default h-full">
         <div className="w-14 h-14 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center mb-6 shadow-sm transition-all duration-500 group-hover:bg-[#155e2d] group-hover:text-white group-hover:scale-110 group-hover:rotate-3">
           {icon}
         </div>
@@ -165,16 +187,27 @@ function FeatureCard({ icon, title, desc, delay }) {
 
 // --- Prototype Modal Component ---
 function PrototypeModal({ onClose }) {
-  const [view, setView] = useState("shop"); // shop, checkout, processing, success
+  const [view, setView] = useState("shop");
   const [cart, setCart] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
 
-  // Replacing SVGs with high-quality placeholder images
   const products = [
-    { id: 1, name: "Fresh Apples (1kg)", price: 150, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6pNMjiSYAaV6we-irbnux7cG4LvAgkXqBQQ&s" },
-    { id: 2, name: "Farm Fresh Milk (1L)", price: 60, image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80" },
-    { id: 3, name: "Whole Wheat Bread", price: 40, image: "https://images.unsplash.com/photo-1598373182133-52452f7691ef?auto=format&fit=crop&w=400&q=80" },
-    { id: 4, name: "Premium Basmati Rice", price: 120, image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80" },
+    { id: 1, name: "Fresh Apples (1kg)", price: 150, category: "Fruits", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6pNMjiSYAaV6we-irbnux7cG4LvAgkXqBQQ&s" },
+    { id: 2, name: "Farm Fresh Milk (1L)", price: 60, category: "Dairy", image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=400&q=80" },
+    { id: 3, name: "Whole Wheat Bread", price: 40, category: "Bakery", image: "https://images.unsplash.com/photo-1598373182133-52452f7691ef?auto=format&fit=crop&w=400&q=80" },
+    { id: 4, name: "Premium Basmati Rice", price: 120, category: "Pantry", image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80" },
+    { id: 5, name: "Organic Bananas (12pcs)", price: 80, category: "Fruits", image: "https://images.unsplash.com/photo-1571501478200-720616119569?auto=format&fit=crop&w=400&q=80" },
+    { id: 6, name: "Amul Butter (500g)", price: 260, category: "Dairy", image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=400&q=80" },
   ];
+
+  const categories = ["All", "Fruits", "Dairy", "Bakery", "Pantry"];
+
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = activeCategory === "All" || p.category === activeCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -199,7 +232,7 @@ function PrototypeModal({ onClose }) {
   const handlePayment = () => {
     setView("processing");
     setTimeout(() => {
-      setView("success");
+      setView("tracking");
       setCart([]);
     }, 2000);
   };
@@ -234,31 +267,65 @@ function PrototypeModal({ onClose }) {
           {view === "shop" && (
             <>
               {/* Products Grid */}
-              <div className="flex-1 p-4 md:p-8 md:overflow-y-auto">
-                <h3 className="font-bold text-xl mb-6 text-slate-800">Fresh Groceries</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                  {products.map((p) => (
-                    <div key={p.id} className="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden group">
-                      <div className="h-40 sm:h-48 w-full bg-slate-100 overflow-hidden relative">
-                        <img 
-                          src={p.image} 
-                          alt={p.name} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
-                      </div>
-                      <div className="p-5 flex flex-col flex-1 text-center bg-white z-10 relative">
-                        <h4 className="font-bold text-slate-900 mb-1">{p.name}</h4>
-                        <p className="text-slate-500 font-medium mb-4">₹{p.price}</p>
-                        <button 
-                          onClick={() => addToCart(p)}
-                          className="mt-auto w-full py-3 rounded-xl border-2 border-[#22c55e] text-[#155e2d] font-bold hover:bg-[#22c55e] hover:text-white transition-colors active:scale-95"
-                        >
-                          Add to Cart
-                        </button>
-                      </div>
+              <div className="flex-1 flex flex-col md:overflow-hidden">
+                <div className="p-4 md:p-8 pb-4 shrink-0 bg-white border-b border-slate-100">
+                  <div className="relative mb-6">
+                    <div className="absolute inset-y-0 left-4 flex items-center text-slate-400">
+                      <SearchIcon />
                     </div>
-                  ))}
+                    <input 
+                      type="text" 
+                      placeholder="Search Aashapura Mall products..." 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-12 pr-4 text-slate-900 focus:outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors"
+                    />
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                    {categories.map(cat => (
+                      <button 
+                        key={cat}
+                        onClick={() => setActiveCategory(cat)}
+                        className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+                          activeCategory === cat 
+                            ? "bg-[#155e2d] text-white" 
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                    {filteredProducts.map((p) => (
+                      <div key={p.id} className="bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden group">
+                        <div className="h-40 sm:h-48 w-full bg-slate-100 overflow-hidden relative">
+                          <img 
+                            src={p.image} 
+                            alt={p.name} 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded text-slate-700 shadow-sm">
+                            {p.category}
+                          </div>
+                        </div>
+                        <div className="p-5 flex flex-col flex-1 text-center bg-white z-10 relative">
+                          <h4 className="font-bold text-slate-900 mb-1">{p.name}</h4>
+                          <p className="text-slate-500 font-medium mb-4">₹{p.price}</p>
+                          <button 
+                            onClick={() => addToCart(p)}
+                            className="mt-auto w-full py-3 rounded-xl border-2 border-[#22c55e] text-[#155e2d] font-bold hover:bg-[#22c55e] hover:text-white transition-colors active:scale-95"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -363,18 +430,49 @@ function PrototypeModal({ onClose }) {
             </div>
           )}
 
-          {view === "success" && (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 animate-in zoom-in-95 duration-500">
-              <div className="w-24 h-24 bg-[#22c55e]/10 text-[#22c55e] rounded-full flex items-center justify-center mb-6 shadow-sm">
-                <CheckIcon />
+          {view === "tracking" && (
+            <div className="flex-1 flex flex-col items-center p-6 bg-slate-100 animate-in zoom-in-95 duration-500 overflow-y-auto">
+              <div className="bg-white w-full max-w-lg rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mt-auto mb-auto">
+                <div className="flex items-center justify-center w-16 h-16 bg-[#22c55e]/10 text-[#22c55e] rounded-full mx-auto mb-4">
+                  <CheckIcon />
+                </div>
+                <h3 className="font-bold text-2xl text-slate-900 text-center mb-2">Order Confirmed</h3>
+                <p className="text-slate-500 text-center mb-8">Arriving in 15-20 minutes to your Rani address.</p>
+                
+                <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[#22c55e] before:to-slate-200">
+                  <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-[#22c55e] text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+                      <CheckIcon />
+                    </div>
+                    <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-[#22c55e] bg-green-50/30">
+                      <h4 className="font-bold text-slate-900 text-sm">Order Placed</h4>
+                      <p className="text-xs text-slate-500 mt-1">We have received your order.</p>
+                    </div>
+                  </div>
+                  <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-[#22c55e] text-white shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+                      <StoreIcon />
+                    </div>
+                    <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-[#22c55e] bg-green-50/30">
+                      <h4 className="font-bold text-slate-900 text-sm">Packing</h4>
+                      <p className="text-xs text-slate-500 mt-1">Vendor is packing your items.</p>
+                    </div>
+                  </div>
+                  <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-slate-200 text-slate-400 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+                      <TruckIcon />
+                    </div>
+                    <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-100 bg-white opacity-60">
+                      <h4 className="font-bold text-slate-900 text-sm">Out for Delivery</h4>
+                      <p className="text-xs text-slate-500 mt-1">Waiting for driver assignment.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button onClick={() => setView("shop")} className="w-full mt-8 py-4 rounded-xl font-bold border-2 border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors active:scale-95">
+                  Back to Shop
+                </button>
               </div>
-              <h3 className="font-bold text-3xl text-slate-900 mb-3 text-center">Order Successful!</h3>
-              <p className="text-slate-500 text-center max-w-sm mb-8 leading-relaxed">
-                Your dummy order has been placed successfully. This concludes the prototype demonstration.
-              </p>
-              <button onClick={() => setView("shop")} className="px-8 py-4 rounded-xl font-bold bg-slate-900 text-white hover:bg-slate-800 transition-transform active:scale-95 shadow-md">
-                Back to Shop
-              </button>
             </div>
           )}
 
@@ -397,6 +495,29 @@ export default function App() {
   
   // State to manage the prototype modal visibility
   const [showDemo, setShowDemo] = useState(false);
+
+  // State and ref for the mobile scroll animation line
+  const stepsContainerRef = useRef(null);
+  const [stepScrollProgress, setStepScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!stepsContainerRef.current) return;
+      const rect = stepsContainerRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      // Calculate scroll progress percentage based on element position
+      const elementTop = rect.top;
+      const elementHeight = rect.height;
+      const viewportMiddle = windowHeight / 2;
+      
+      let percent = ((viewportMiddle - elementTop) / elementHeight) * 100;
+      setStepScrollProgress(Math.max(0, Math.min(100, percent)));
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleNotify = () => {
     if (!email && !phone) return;
@@ -454,7 +575,7 @@ export default function App() {
             </div>
 
             <div className="hidden md:flex items-center gap-8">
-              {["Features", "How it Works", "Contact"].map((l) => (
+              {["Features", "How it Works", "For Vendors"].map((l) => (
                 <a
                   key={l}
                   href={`#${l.replace(/\s+/g, '').toLowerCase()}`}
@@ -508,7 +629,7 @@ export default function App() {
         <div
           className={`fixed inset-0 z-40 bg-white/95 backdrop-blur-md pt-32 px-8 flex flex-col gap-6 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden ${menuOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}`}
         >
-          {["Features", "How it Works", "Contact"].map((l, index) => (
+          {["Features", "How it Works", "For Vendors", "Contact"].map((l, index) => (
             <a
               key={l}
               href={`#${l.replace(/\s+/g, '').toLowerCase()}`}
@@ -529,7 +650,7 @@ export default function App() {
             style={{
               opacity: menuOpen ? 1 : 0,
               transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
-              transitionDelay: '225ms'
+              transitionDelay: '300ms'
             }}
           >
             Try Prototype
@@ -540,7 +661,7 @@ export default function App() {
             style={{
               opacity: menuOpen ? 1 : 0,
               transform: menuOpen ? 'translateY(0)' : 'translateY(20px)',
-              transitionDelay: '300ms'
+              transitionDelay: '375ms'
             }}
             onClick={(e) => scrollToSection(e, 'notify')}
           >
@@ -549,10 +670,13 @@ export default function App() {
         </div>
 
         {/* ════════════════════════
-           HERO
+            HERO
         ════════════════════════ */}
-        <section className="pt-40 pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center">
+        <section className="relative pt-40 pb-24 px-6 max-w-5xl mx-auto flex flex-col items-center text-center overflow-hidden">
           
+          {/* Ambient Glowing Background */}
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[120%] md:w-[800px] h-[500px] bg-gradient-to-tr from-[#22c55e]/20 via-[#155e2d]/5 to-transparent blur-[80px] rounded-[100%] -z-10 pointer-events-none" />
+
           <Reveal delay="delay-100">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-wider mb-8 bg-[#22c55e]/10 text-[#155e2d] border border-[#22c55e]/20 uppercase hover:bg-[#22c55e]/20 transition-colors duration-300 cursor-default">
               <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
@@ -570,12 +694,22 @@ export default function App() {
           </Reveal>
 
           <Reveal delay="delay-300">
-            <p className="text-lg md:text-xl text-slate-600 mb-14 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
               Shop from all Aashapura Mall vendors in one place. Fresh groceries, fashion, and daily essentials delivered directly to your doorstep in Rani.
             </p>
           </Reveal>
 
           <Reveal delay="delay-400">
+            <div className="flex flex-wrap justify-center gap-3 mb-14">
+              {['🍎 Fresh Produce', '🍞 Bakery Items', '⚡ 20-Min Delivery', '🛒 50+ Vendors'].map(tag => (
+                <span key={tag} className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-slate-200 shadow-sm rounded-full text-sm font-bold text-slate-600">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal delay="delay-500">
             <div className="flex items-center justify-center gap-3 md:gap-5 mb-14">
               <DigitBox value={days} label="Days" />
               <span className="text-2xl font-bold text-slate-300 -mt-6 animate-pulse">:</span>
@@ -587,7 +721,7 @@ export default function App() {
             </div>
           </Reveal>
 
-          <Reveal delay="delay-500" className="w-full sm:w-auto">
+          <Reveal delay="delay-600" className="w-full sm:w-auto">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
               <a 
                 href="#notify" 
@@ -607,7 +741,7 @@ export default function App() {
         </section>
 
         {/* ════════════════════════
-           FEATURES
+            FEATURES
         ════════════════════════ */}
         <section id="features" className="py-24 px-6 bg-slate-50 border-y border-slate-100">
           <div className="max-w-6xl mx-auto">
@@ -646,7 +780,7 @@ export default function App() {
         </section>
 
         {/* ════════════════════════
-           HOW IT WORKS
+            HOW IT WORKS
         ════════════════════════ */}
         <section id="howitworks" className="py-24 px-6 max-w-5xl mx-auto overflow-hidden">
           <Reveal>
@@ -657,8 +791,18 @@ export default function App() {
             </div>
           </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+          <div ref={stepsContainerRef} className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            
+            {/* Desktop Horizontal Line */}
             <div className="hidden md:block absolute top-[3rem] left-[16%] right-[16%] h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent z-0" />
+
+            {/* Mobile Vertical Animated Line */}
+            <div className="md:hidden absolute top-[3rem] bottom-[3rem] left-1/2 -translate-x-1/2 w-1 bg-slate-100 z-0 rounded-full overflow-hidden">
+              <div 
+                className="w-full bg-[#22c55e] transition-all duration-100 ease-linear" 
+                style={{ height: `${stepScrollProgress}%` }} 
+              />
+            </div>
 
             {[
               { step: "01", title: "Sign Up Free", desc: "Create your free account on our platform in less than a minute." },
@@ -667,7 +811,9 @@ export default function App() {
             ].map(({ step, title, desc }, i) => (
               <Reveal key={step} delay={`delay-${i * 100}`}>
                 <div className="relative z-10 flex flex-col items-center text-center group cursor-default">
-                  <div className="w-24 h-24 rounded-full bg-white border-2 border-slate-100 flex items-center justify-center text-2xl font-black text-slate-300 mb-6 group-hover:border-[#22c55e] group-hover:text-[#22c55e] group-hover:scale-110 transition-all duration-500 shadow-sm group-hover:shadow-xl group-hover:shadow-[#22c55e]/20">
+                  <div className={`w-24 h-24 rounded-full bg-white border-2 flex items-center justify-center text-2xl font-black mb-6 transition-all duration-500 shadow-sm z-10 
+                    ${stepScrollProgress > (i * 40) ? 'border-[#22c55e] text-[#22c55e] scale-110 shadow-xl shadow-[#22c55e]/20' : 'border-slate-100 text-slate-300'} 
+                    group-hover:border-[#22c55e] group-hover:text-[#22c55e] group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-[#22c55e]/20`}>
                     {step}
                   </div>
                   <h3 className="font-bold text-xl text-slate-900 mb-3 transition-colors duration-300 group-hover:text-[#155e2d]">{title}</h3>
@@ -679,7 +825,86 @@ export default function App() {
         </section>
 
         {/* ════════════════════════
-           NOTIFY SECTION
+            FOR VENDORS
+        ════════════════════════ */}
+        <section id="forvendors" className="py-24 px-6 bg-[#155e2d] text-white">
+          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <Reveal>
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold tracking-wider mb-6 bg-white/10 border border-white/20 uppercase">
+                  <StoreIcon /> For Mall Vendors
+                </div>
+                <h2 className="font-bold text-3xl md:text-5xl mb-6 tracking-tight leading-tight">
+                  Take your business online with zero hassle.
+                </h2>
+                <p className="text-green-100 mb-8 text-lg leading-relaxed">
+                  G-Fresh gives Aashapura Mall shop owners a dedicated platform to reach every home in Rani. We handle the app, the marketing, and the delivery network. You focus on what you do best—selling great products.
+                </p>
+                <ul className="space-y-4 mb-8">
+                  {['Dedicated seller dashboard', 'Real-time inventory management', 'Automated delivery dispatch', 'Clear payout reports'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-green-50 font-medium">
+                      <div className="w-6 h-6 rounded-full bg-[#22c55e] flex items-center justify-center shrink-0">
+                        <CheckIcon />
+                      </div>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+            <Reveal delay="delay-200">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#22c55e]/40 to-transparent blur-3xl rounded-full"></div>
+                <div className="bg-white p-8 rounded-[2.5rem] text-slate-900 shadow-2xl relative">
+                  <h3 className="font-bold text-2xl mb-4 text-center">Partner With Us</h3>
+                  <p className="text-slate-500 text-center mb-8">Join the digital revolution in Rani.</p>
+                  <form onSubmit={(e) => { e.preventDefault(); alert("Vendor inquiry sent!"); }} className="space-y-4">
+                    <input type="text" placeholder="Shop Name" className="w-full px-6 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#22c55e] focus:outline-none" required />
+                    <input type="tel" placeholder="Contact Number" className="w-full px-6 py-4 rounded-xl bg-slate-50 border border-slate-200 focus:border-[#22c55e] focus:outline-none" required />
+                    <button type="submit" className="w-full bg-[#155e2d] hover:bg-[#104a23] text-white font-bold py-4 rounded-xl transition-colors mt-2 shadow-lg active:scale-95">
+                      Request Callback
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ════════════════════════
+            TESTIMONIALS
+        ════════════════════════ */}
+        <section className="py-24 px-6 bg-slate-50">
+          <div className="max-w-6xl mx-auto">
+            <Reveal>
+              <div className="text-center mb-16">
+                <h2 className="font-bold text-3xl md:text-4xl text-slate-900 tracking-tight">
+                  What locals are saying
+                </h2>
+              </div>
+            </Reveal>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { name: "Rahul S.", text: "Finally an app that brings Aashapura Mall directly to my house. The delivery prototype looks incredibly smooth." },
+                { name: "Priya M.", text: "I love that I can buy groceries and bakery items in one single order. Very excited for the launch!" },
+                { name: "Vikram R.", text: "This is exactly what Rani needed. A professional service for local businesses. Highly recommend." }
+              ].map((review, i) => (
+                <Reveal key={i} delay={`delay-${i * 100}`}>
+                  <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm h-full">
+                    <div className="flex text-[#22c55e] mb-4">
+                      <StarIcon /><StarIcon /><StarIcon /><StarIcon /><StarIcon />
+                    </div>
+                    <p className="text-slate-600 mb-6 italic">"{review.text}"</p>
+                    <p className="font-bold text-slate-900">{review.name}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ════════════════════════
+            NOTIFY SECTION
         ════════════════════════ */}
         <section id="notify" className="py-24 px-6">
           <Reveal>
@@ -737,7 +962,7 @@ export default function App() {
         </section>
 
         {/* ════════════════════════
-           FOOTER
+            FOOTER
         ════════════════════════ */}
         <footer id="contact" className="py-12 px-6 border-t border-slate-100 bg-white">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
